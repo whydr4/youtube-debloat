@@ -22,8 +22,9 @@ and a wall of vertical slop engineered to eat the next 40 minutes of your life.
 - ✂️ **Shorts. All of them.** Shelves, feed items, search results, sidebar entry, channel tab, filter chip.
 - ↪️ **`/shorts/…` links** quietly open in the normal player — with a seek bar, like a civilized video.
 - 🙈 **The "ad blockers are not allowed" nag** — hidden, and your video keeps playing.
+- 🎛️ **Three switches** in the toolbar button — ads, Shorts, Shorts redirect. That's the whole settings screen.
 
-No account. No telemetry. No "Pro" tier. No remote filter lists. About 300 lines of code you can read over coffee.
+No account. No telemetry. No "Pro" tier. No remote filter lists. About 400 lines of code you can read over coffee.
 
 ---
 
@@ -35,9 +36,9 @@ It edits the instructions.
 
 | Layer | What it does |
 |---|---|
-| **1. Response surgery** (`inject.js`) | Runs in the page before YouTube's own code. Hooks `JSON.parse`, `fetch`, `XMLHttpRequest` and the inline `ytInitialPlayerResponse`, and renames `adPlacements`, `adSlots`, `playerAds` → `no_ads`. The player gets a valid response with nothing to schedule. |
+| **1. Response surgery** (`inject.js`) | Runs in the page before YouTube's own code. Hooks `JSON.parse`, `fetch`, `XMLHttpRequest` and the inline `ytInitialPlayerResponse`, and renames `adPlacements`, `adSlots`, `playerAds` → `no_ads`. Fetch bodies are rewritten *as they stream* — YouTube never waits on us. The player gets a valid response with nothing to schedule. |
 | **2. Iframe bypass guard** | YouTube likes to pull a *clean* `fetch` out of a fresh hidden iframe to dodge hooks like ours. Every iframe gets patched the moment it's attached to the page. |
-| **3. Auto-skip safety net** (`content.js`) | If an ad ever slips through, it's muted, fast-forwarded to the end and its skip button is clicked — in the same animation frame it appears. |
+| **3. Auto-skip safety net** (`content.js`) | If an ad ever slips through, it's muted, fast-forwarded to the end and its skip button is clicked — in the same animation frame it appears. Watches only the player's `class`, not the whole page, so it costs nothing while you watch. |
 | **4. CSS guillotine** (`hide.css`) | Feed ads and every Shorts surface get `display: none`. Modern `:has()` selectors, no layout jank. |
 
 ---
@@ -97,11 +98,12 @@ no filter-list subscriptions, no dashboard, no background process phoning anywhe
 small enough to audit yourself. And killing Shorts usually means digging for extra filter lists — here it's the default.
 
 **Can I keep Shorts and only block ads (or vice versa)?**
-Not with a toggle yet. Delete the Shorts block at the bottom of `extension/hide.css` (and the redirect in
-`content.js`) and rebuild. A settings popup is on the list — PRs welcome.
+Yes. Click the Debloat button in Safari's toolbar on youtube.com — three switches: *Block ads*,
+*Hide Shorts*, *Open Shorts as videos*. Changes apply immediately, no reload.
 
 **Does it collect anything?**
-No. There's no network code, no storage, no analytics. Read `extension/` — it's four files.
+No. There's no network code, no analytics. The only thing stored is the state of those three switches,
+locally in Safari. Read `extension/` — it's a handful of files.
 
 **Is this legal?**
 Blocking content in your own browser is your business. It does break YouTube's Terms of Service,
@@ -118,11 +120,16 @@ Not yet. The extension code is portable — an iOS target is a solid first PR.
 extension/         ← the actual extension (edit these)
   manifest.json
   inject.js        ← response surgery, runs in the page
-  content.js       ← auto-skip, Shorts redirect, nag killer
+  content.js       ← settings, auto-skip, Shorts redirect, nag killer
   hide.css         ← everything that gets display:none
+  popup/           ← the toolbar menu (three switches)
   icons/
+assets/            ← icon sources (SVG)
 xcode/             ← Safari app wrapper (references ../extension, no copies)
-scripts/build.sh   ← one-command build
+scripts/
+  build.sh         ← one-command build
+  make-icon-svg.py ← regenerates assets/*.svg
+  make-icons.swift ← rasterises them into every PNG size
 ```
 
 ## Contributing

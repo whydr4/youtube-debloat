@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>YouTube Debloat</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <header>
+    <img src="../icons/icon-128.png" width="28" height="28" alt="">
+    <h1>YouTube Debloat</h1>
+  </header>
+
+  <main>
+    <label class="row">
+      <span>
+        <b>Block ads</b>
+        <small>Pre-rolls, mid-rolls, banners, promoted videos</small>
+      </span>
+      <input type="checkbox" data-key="ads" class="switch">
+    </label>
+
+    <label class="row">
+      <span>
+        <b>Hide Shorts</b>
+        <small>Shelves, feed items, sidebar entry, channel tab</small>
+      </span>
+      <input type="checkbox" data-key="shorts" class="switch">
+    </label>
+
+    <label class="row">
+      <span>
+        <b>Open Shorts as videos</b>
+        <small>/shorts/… links load in the normal player</small>
+      </span>
+      <input type="checkbox" data-key="shortsRedirect" class="switch">
+    </label>
+  </main>
+
+  <footer>
+    <span id="version"></span>
+    <a href="https://github.com/whydr4/youtube-debloat" target="_blank" rel="noopener">GitHub</a>
+  </footer>
+
+  <script src="popup.js"></script>
+</body>
+</html>
