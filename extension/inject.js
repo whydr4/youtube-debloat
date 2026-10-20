@@ -69,6 +69,74 @@
     });
   };
 
+  // Media streams (SABR) arrive as UMP: a sequence of [type][size][payload] parts.
+  // When the server wanted to show a pre-roll it withholds media for the ad's
+  // length and pushes a SNACKBAR_MESSAGE part — the "Something went wrong" toast.
+  // The wait is enforced server-side (a signed slot with its own clock), but the
+  // toast is just a part we can drop while passing everything else through.
+  const UMP_SNACKBAR = 67;
+  const readVarint = (b, p) => {
+    if (p >= b.length) return null;
+    const b0 = b[p];
+    const n = b0 < 128 ? 1 : b0 < 192 ? 2 : b0 < 224 ? 3 : b0 < 240 ? 4 : 5;
+    if (p + n > b.length) return null;
+    switch (n) {
+      case 1: return [b0, 1];
+      case 2: return [(b0 & 0x3f) | (b[p + 1] << 6), 2];
+      case 3: return [(b0 & 0x1f) | (b[p + 1] << 5) | (b[p + 2] << 13), 3];
+      case 4: return [(b0 & 0x0f) | (b[p + 1] << 4) | (b[p + 2] << 12) | (b[p + 3] << 20), 4];
+      default: return [(b[p + 1] | (b[p + 2] << 8) | (b[p + 3] << 16) | (b[p + 4] << 24)) >>> 0, 5];
+    }
+  };
+  const umpStream = (win) => {
+    let pending = new Uint8Array(0); // unparsed bytes at a part boundary
+    let remaining = 0;               // payload bytes left in the current part
+    let dropping = false;            // current part is a snackbar
+    let broken = false;              // parse failed — pass the rest through untouched
+    const concat = (a, b) => {
+      const out = new Uint8Array(a.length + b.length);
+      out.set(a);
+      out.set(b, a.length);
+      return out;
+    };
+    return new win.TransformStream({
+      transform(chunk, controller) {
+        if (broken) return controller.enqueue(chunk);
+        const data = pending.length ? concat(pending, chunk) : chunk;
+        pending = new Uint8Array(0);
+        let p = 0;
+        while (p < data.length) {
+          if (remaining > 0) {
+            const take = Math.min(remaining, data.length - p);
+            if (!dropping) controller.enqueue(data.subarray(p, p + take));
+            p += take;
+            remaining -= take;
+            continue;
+          }
+          const type = readVarint(data, p);
+          const size = type && readVarint(data, p + type[1]);
+          if (!type || !size) {
+            pending = data.slice(p); // header straddles chunks
+            return;
+          }
+          if (size[0] > 1e8) {
+            broken = true;
+            return controller.enqueue(data.subarray(p));
+          }
+          const header = type[1] + size[1];
+          dropping = type[0] === UMP_SNACKBAR;
+          remaining = size[0];
+          if (!dropping) controller.enqueue(data.subarray(p, p + header));
+          p += header;
+        }
+      },
+      flush(controller) {
+        if (pending.length) controller.enqueue(pending);
+      },
+    });
+  };
+  const isUmp = (res) => /vnd\.yt-ump/.test(res.headers.get("content-type") || "");
+
   const patchRealm = (win) => {
     // 1. JSON.parse — covers anything parsed from strings.
     const origParse = win.JSON.parse;
@@ -80,18 +148,16 @@
     const origFetch = win.fetch;
     win.fetch = async function (input, init) {
       const res = await origFetch.call(this, input, init);
-      if (!adsEnabled()) return res;
+      if (!adsEnabled() || !res.body) return res;
       const url = typeof input === "string" ? input : input && input.url;
-      if (!isAdUrl(url) || !res.body) return res;
+      const ump = res.status === 200 && /\/videoplayback\b/.test(String(url)) && isUmp(res);
+      if (!isAdUrl(url) && !ump) return res;
       try {
         const headers = new win.Headers(res.headers);
         headers.delete("content-length");
         headers.delete("content-encoding");
-        const patched = new win.Response(res.body.pipeThrough(scrubStream(win)), {
-          status: res.status,
-          statusText: res.statusText,
-          headers,
-        });
+        const body = res.body.pipeThrough(ump ? umpStream(win) : scrubStream(win));
+        const patched = new win.Response(body, { status: res.status, statusText: res.statusText, headers });
         Object.defineProperty(patched, "url", { value: res.url });
         return patched;
       } catch (_) {

@@ -40,6 +40,7 @@ It edits the instructions.
 | **2. Iframe bypass guard** | YouTube likes to pull a *clean* `fetch` out of a fresh hidden iframe to dodge hooks like ours. Every iframe gets patched the moment it's attached to the page. |
 | **3. Auto-skip safety net** (`content.js`) | If an ad ever slips through, it's muted, fast-forwarded to the end and its skip button is clicked — in the same animation frame it appears. Watches only the player's `class`, not the whole page, so it costs nothing while you watch. |
 | **4. CSS guillotine** (`hide.css`) | Feed ads and every Shorts surface get `display: none`. Modern `:has()` selectors, no layout jank. |
+| **5. Stream filter** (`inject.js`) | YouTube's media protocol (SABR/UMP) carries commands next to the video bytes. The one that pops the "Something went wrong" toast is dropped in flight; the bytes go through untouched. |
 
 ---
 
@@ -85,6 +86,12 @@ Open YouTube, then **Develop → Show JavaScript Console** and look for:
 ---
 
 ## FAQ
+
+**Why does the first video of a session take ~10 seconds to start?**
+Because YouTube wanted to show you a pre-roll. Since 2025 its streaming server holds the video back for
+exactly the length of the ad it didn't get to play — a signed, server-side timer that no client-side trick
+can skip (we tried: resending the request just gets another "wait"). Without Debloat you'd watch a 10-second
+ad; with it you watch a 10-second spinner, minus the toast. Later videos in the same tab start instantly.
 
 **Will YouTube break this?**
 Probably — sooner or later. YouTube changes its markup and ad delivery constantly, and Google has been
