@@ -20,15 +20,24 @@ xcodebuild \
   CODE_SIGN_IDENTITY="-" CODE_SIGN_STYLE=Manual DEVELOPMENT_TEAM="" \
   build -quiet
 
+# Copy without extended attributes: Finder/iCloud tag folders on the Desktop with
+# com.apple.FinderInfo, which invalidates the signature, and Safari then refuses
+# to list the extension ("does not have a code signature" in Console).
+install_app() {
+  rm -rf "$2"
+  ditto --noextattr --noqtn "$1" "$2"
+  xattr -cr "$2"
+  codesign --verify --deep --strict "$2" 2>/dev/null || codesign --force --deep --sign - "$2"
+  codesign --verify --deep --strict "$2"
+}
+
 mkdir -p "$ROOT/dist"
-rm -rf "$ROOT/dist/$APP"
-ditto "$DERIVED/Build/Products/Release/$APP" "$ROOT/dist/$APP"
+install_app "$DERIVED/Build/Products/Release/$APP" "$ROOT/dist/$APP"
 echo "✔ Built: dist/$APP"
 
 if [[ "${1:-}" == "--install" ]]; then
   mkdir -p "$HOME/Applications"
-  rm -rf "$HOME/Applications/$APP"
-  ditto "$ROOT/dist/$APP" "$HOME/Applications/$APP"
+  install_app "$ROOT/dist/$APP" "$HOME/Applications/$APP"
   open "$HOME/Applications/$APP"
   echo "✔ Installed to ~/Applications and launched. Now enable it in Safari → Settings → Extensions."
 fi
