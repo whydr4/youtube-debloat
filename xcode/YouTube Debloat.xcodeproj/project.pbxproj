@@ -10,6 +10,7 @@
 		0D012E6F3087B35B00BF6F5B /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D012E6E3087B35B00BF6F5B /* AppDelegate.swift */; };
 		0D012E733087B35B00BF6F5B /* Main.html in Resources */ = {isa = PBXBuildFile; fileRef = 0D012E713087B35B00BF6F5B /* Main.html */; };
 		0D012E753087B35B00BF6F5B /* Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 0D012E743087B35B00BF6F5B /* Icon.png */; };
+		0D012EA43087B35E00BF6F5B /* Icon-dark.png in Resources */ = {isa = PBXBuildFile; fileRef = 0D012EA53087B35E00BF6F5B /* Icon-dark.png */; };
 		0D012E773087B35B00BF6F5B /* Style.css in Resources */ = {isa = PBXBuildFile; fileRef = 0D012E763087B35B00BF6F5B /* Style.css */; };
 		0D012E793087B35B00BF6F5B /* Script.js in Resources */ = {isa = PBXBuildFile; fileRef = 0D012E783087B35B00BF6F5B /* Script.js */; };
 		0D012E7B3087B35B00BF6F5B /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D012E7A3087B35B00BF6F5B /* ViewController.swift */; };
@@ -52,6 +53,7 @@
 		0D012E6E3087B35B00BF6F5B /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		0D012E723087B35B00BF6F5B /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = Base; path = Base.lproj/Main.html; sourceTree = "<group>"; };
 		0D012E743087B35B00BF6F5B /* Icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Icon.png; sourceTree = "<group>"; };
+		0D012EA53087B35E00BF6F5B /* Icon-dark.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-dark.png"; sourceTree = "<group>"; };
 		0D012E763087B35B00BF6F5B /* Style.css */ = {isa = PBXFileReference; lastKnownFileType = text.css; path = Style.css; sourceTree = "<group>"; };
 		0D012E783087B35B00BF6F5B /* Script.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = Script.js; sourceTree = "<group>"; };
 		0D012E7A3087B35B00BF6F5B /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -119,6 +121,7 @@
 			children = (
 				0D012E713087B35B00BF6F5B /* Main.html */,
 				0D012E743087B35B00BF6F5B /* Icon.png */,
+				0D012EA53087B35E00BF6F5B /* Icon-dark.png */,
 				0D012E763087B35B00BF6F5B /* Style.css */,
 				0D012E783087B35B00BF6F5B /* Script.js */,
 			);
@@ -229,6 +232,7 @@
 			isa = PBXResourcesBuildPhase;
 			files = (
 				0D012E753087B35B00BF6F5B /* Icon.png in Resources */,
+				0D012EA43087B35E00BF6F5B /* Icon-dark.png in Resources */,
 				0D012E7E3087B35B00BF6F5B /* Main.storyboard in Resources */,
 				0D012E793087B35B00BF6F5B /* Script.js in Resources */,
 				0D012E733087B35B00BF6F5B /* Main.html in Resources */,

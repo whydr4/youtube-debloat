@@ -1,5 +1,8 @@
 <p align="center">
-  <img src="extension/icons/icon-128.png" width="96" alt="">
+  <picture>
+    <source srcset="extension/icons/icon-128-dark.png" media="(prefers-color-scheme: dark)">
+    <img src="extension/icons/icon-128.png" width="96" alt="">
+  </picture>
 </p>
 
 <h1 align="center">YouTube Debloat</h1>

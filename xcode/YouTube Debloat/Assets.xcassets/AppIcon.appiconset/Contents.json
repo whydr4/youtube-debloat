@@ -1,68 +1,25 @@
 {
   "images" : [
-    {
-      "size" : "16x16",
-      "idiom" : "mac",
-      "filename" : "mac-icon-16@1x.png",
-      "scale" : "1x"
-    },
-    {
-      "size" : "16x16",
-      "idiom" : "mac",
-      "filename" : "mac-icon-16@2x.png",
-      "scale" : "2x"
-    },
-    {
-      "size" : "32x32",
-      "idiom" : "mac",
-      "filename" : "mac-icon-32@1x.png",
-      "scale" : "1x"
-    },
-    {
-      "size" : "32x32",
-      "idiom" : "mac",
-      "filename" : "mac-icon-32@2x.png",
-      "scale" : "2x"
-    },
-    {
-      "size" : "128x128",
-      "idiom" : "mac",
-      "filename" : "mac-icon-128@1x.png",
-      "scale" : "1x"
-    },
-    {
-      "size" : "128x128",
-      "idiom" : "mac",
-      "filename" : "mac-icon-128@2x.png",
-      "scale" : "2x"
-    },
-    {
-      "size" : "256x256",
-      "idiom" : "mac",
-      "filename" : "mac-icon-256@1x.png",
-      "scale" : "1x"
-    },
-    {
-      "size" : "256x256",
-      "idiom" : "mac",
-      "filename" : "mac-icon-256@2x.png",
-      "scale" : "2x"
-    },
-    {
-      "size" : "512x512",
-      "idiom" : "mac",
-      "filename" : "mac-icon-512@1x.png",
-      "scale" : "1x"
-    },
-    {
-      "size" : "512x512",
-      "idiom" : "mac",
-      "filename" : "mac-icon-512@2x.png",
-      "scale" : "2x"
-    }
+    { "size" : "16x16",   "idiom" : "mac", "filename" : "mac-icon-16@1x.png",  "scale" : "1x" },
+    { "size" : "16x16",   "idiom" : "mac", "filename" : "mac-icon-16@2x.png",  "scale" : "2x" },
+    { "size" : "32x32",   "idiom" : "mac", "filename" : "mac-icon-32@1x.png",  "scale" : "1x" },
+    { "size" : "32x32",   "idiom" : "mac", "filename" : "mac-icon-32@2x.png",  "scale" : "2x" },
+    { "size" : "128x128", "idiom" : "mac", "filename" : "mac-icon-128@1x.png", "scale" : "1x" },
+    { "size" : "128x128", "idiom" : "mac", "filename" : "mac-icon-128@2x.png", "scale" : "2x" },
+    { "size" : "256x256", "idiom" : "mac", "filename" : "mac-icon-256@1x.png", "scale" : "1x" },
+    { "size" : "256x256", "idiom" : "mac", "filename" : "mac-icon-256@2x.png", "scale" : "2x" },
+    { "size" : "512x512", "idiom" : "mac", "filename" : "mac-icon-512@1x.png", "scale" : "1x" },
+    { "size" : "512x512", "idiom" : "mac", "filename" : "mac-icon-512@2x.png", "scale" : "2x" },
+    { "size" : "16x16",   "idiom" : "mac", "filename" : "mac-icon-16@1x-dark.png",  "scale" : "1x", "appearances" : [ { "appearance" : "luminosity", "value" : "dark" } ] },
+    { "size" : "16x16",   "idiom" : "mac", "filename" : "mac-icon-16@2x-dark.png",  "scale" : "2x", "appearances" : [ { "appearance" : "luminosity", "value" : "dark" } ] },
+    { "size" : "32x32",   "idiom" : "mac", "filename" : "mac-icon-32@1x-dark.png",  "scale" : "1x", "appearances" : [ { "appearance" : "luminosity", "value" : "dark" } ] },
+    { "size" : "32x32",   "idiom" : "mac", "filename" : "mac-icon-32@2x-dark.png",  "scale" : "2x", "appearances" : [ { "appearance" : "luminosity", "value" : "dark" } ] },
+    { "size" : "128x128", "idiom" : "mac", "filename" : "mac-icon-128@1x-dark.png", "scale" : "1x", "appearances" : [ { "appearance" : "luminosity", "value" : "dark" } ] },
+    { "size" : "128x128", "idiom" : "mac", "filename" : "mac-icon-128@2x-dark.png", "scale" : "2x", "appearances" : [ { "appearance" : "luminosity", "value" : "dark" } ] },
+    { "size" : "256x256", "idiom" : "mac", "filename" : "mac-icon-256@1x-dark.png", "scale" : "1x", "appearances" : [ { "appearance" : "luminosity", "value" : "dark" } ] },
+    { "size" : "256x256", "idiom" : "mac", "filename" : "mac-icon-256@2x-dark.png", "scale" : "2x", "appearances" : [ { "appearance" : "luminosity", "value" : "dark" } ] },
+    { "size" : "512x512", "idiom" : "mac", "filename" : "mac-icon-512@1x-dark.png", "scale" : "1x", "appearances" : [ { "appearance" : "luminosity", "value" : "dark" } ] },
+    { "size" : "512x512", "idiom" : "mac", "filename" : "mac-icon-512@2x-dark.png", "scale" : "2x", "appearances" : [ { "appearance" : "luminosity", "value" : "dark" } ] }
   ],
-  "info" : {
-    "version" : 1,
-    "author" : "xcode"
-  }
+  "info" : { "version" : 1, "author" : "xcode" }
 }
