@@ -1,0 +1,593 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 110;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		0D012E6F3087B35B00BF6F5B /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D012E6E3087B35B00BF6F5B /* AppDelegate.swift */; };
+		0D012E733087B35B00BF6F5B /* Main.html in Resources */ = {isa = PBXBuildFile; fileRef = 0D012E713087B35B00BF6F5B /* Main.html */; };
+		0D012E753087B35B00BF6F5B /* Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 0D012E743087B35B00BF6F5B /* Icon.png */; };
+		0D012E773087B35B00BF6F5B /* Style.css in Resources */ = {isa = PBXBuildFile; fileRef = 0D012E763087B35B00BF6F5B /* Style.css */; };
+		0D012E793087B35B00BF6F5B /* Script.js in Resources */ = {isa = PBXBuildFile; fileRef = 0D012E783087B35B00BF6F5B /* Script.js */; };
+		0D012E7B3087B35B00BF6F5B /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D012E7A3087B35B00BF6F5B /* ViewController.swift */; };
+		0D012E7E3087B35B00BF6F5B /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0D012E7C3087B35B00BF6F5B /* Main.storyboard */; };
+		0D012E803087B35D00BF6F5B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0D012E7F3087B35D00BF6F5B /* Assets.xcassets */; };
+		0D012E873087B35D00BF6F5B /* YouTube Debloat Extension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 0D012E863087B35D00BF6F5B /* YouTube Debloat Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		0D012E8C3087B35D00BF6F5B /* SafariWebExtensionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D012E8B3087B35D00BF6F5B /* SafariWebExtensionHandler.swift */; };
+		0D012E9D3087B35E00BF6F5B /* icons in Resources */ = {isa = PBXBuildFile; fileRef = 0D012E983087B35E00BF6F5B /* icons */; };
+		0D012E9E3087B35E00BF6F5B /* manifest.json in Resources */ = {isa = PBXBuildFile; fileRef = 0D012E993087B35E00BF6F5B /* manifest.json */; };
+		0D012E9F3087B35E00BF6F5B /* hide.css in Resources */ = {isa = PBXBuildFile; fileRef = 0D012E9A3087B35E00BF6F5B /* hide.css */; };
+		0D012EA03087B35E00BF6F5B /* inject.js in Resources */ = {isa = PBXBuildFile; fileRef = 0D012E9B3087B35E00BF6F5B /* inject.js */; };
+		0D012EA13087B35E00BF6F5B /* content.js in Resources */ = {isa = PBXBuildFile; fileRef = 0D012E9C3087B35E00BF6F5B /* content.js */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		0D012E883087B35D00BF6F5B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0D012E633087B35B00BF6F5B /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 0D012E853087B35D00BF6F5B;
+			remoteInfo = "YouTube Debloat Extension";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		0D012E933087B35D00BF6F5B /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			dstPath = "";
+			dstSubfolder = PlugIns;
+			files = (
+				0D012E873087B35D00BF6F5B /* YouTube Debloat Extension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		0D012E6B3087B35B00BF6F5B /* YouTube Debloat.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "YouTube Debloat.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		0D012E6E3087B35B00BF6F5B /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		0D012E723087B35B00BF6F5B /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = Base; path = Base.lproj/Main.html; sourceTree = "<group>"; };
+		0D012E743087B35B00BF6F5B /* Icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Icon.png; sourceTree = "<group>"; };
+		0D012E763087B35B00BF6F5B /* Style.css */ = {isa = PBXFileReference; lastKnownFileType = text.css; path = Style.css; sourceTree = "<group>"; };
+		0D012E783087B35B00BF6F5B /* Script.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = Script.js; sourceTree = "<group>"; };
+		0D012E7A3087B35B00BF6F5B /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		0D012E7D3087B35B00BF6F5B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		0D012E7F3087B35D00BF6F5B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		0D012E813087B35D00BF6F5B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		0D012E863087B35D00BF6F5B /* YouTube Debloat Extension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "YouTube Debloat Extension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
+		0D012E8B3087B35D00BF6F5B /* SafariWebExtensionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafariWebExtensionHandler.swift; sourceTree = "<group>"; };
+		0D012E8D3087B35D00BF6F5B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		0D012E983087B35E00BF6F5B /* icons */ = {isa = PBXFileReference; lastKnownFileType = folder; name = icons; path = ../../extension/icons; sourceTree = "<group>"; };
+		0D012E993087B35E00BF6F5B /* manifest.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; name = manifest.json; path = ../../extension/manifest.json; sourceTree = "<group>"; };
+		0D012E9A3087B35E00BF6F5B /* hide.css */ = {isa = PBXFileReference; lastKnownFileType = text.css; name = hide.css; path = ../../extension/hide.css; sourceTree = "<group>"; };
+		0D012E9B3087B35E00BF6F5B /* inject.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = inject.js; path = ../../extension/inject.js; sourceTree = "<group>"; };
+		0D012E9C3087B35E00BF6F5B /* content.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = content.js; path = ../../extension/content.js; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		0D012E683087B35B00BF6F5B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			files = (
+			);
+		};
+		0D012E833087B35D00BF6F5B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			files = (
+			);
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		0D012E623087B35B00BF6F5B = {
+			isa = PBXGroup;
+			children = (
+				0D012E6D3087B35B00BF6F5B /* YouTube Debloat */,
+				0D012E8A3087B35D00BF6F5B /* YouTube Debloat Extension */,
+				0D012E6C3087B35B00BF6F5B /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		0D012E6C3087B35B00BF6F5B /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				0D012E6B3087B35B00BF6F5B /* YouTube Debloat.app */,
+				0D012E863087B35D00BF6F5B /* YouTube Debloat Extension.appex */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		0D012E6D3087B35B00BF6F5B /* YouTube Debloat */ = {
+			isa = PBXGroup;
+			children = (
+				0D012E6E3087B35B00BF6F5B /* AppDelegate.swift */,
+				0D012E7A3087B35B00BF6F5B /* ViewController.swift */,
+				0D012E7C3087B35B00BF6F5B /* Main.storyboard */,
+				0D012E7F3087B35D00BF6F5B /* Assets.xcassets */,
+				0D012E813087B35D00BF6F5B /* Info.plist */,
+				0D012E703087B35B00BF6F5B /* Resources */,
+			);
+			path = "YouTube Debloat";
+			sourceTree = "<group>";
+		};
+		0D012E703087B35B00BF6F5B /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				0D012E713087B35B00BF6F5B /* Main.html */,
+				0D012E743087B35B00BF6F5B /* Icon.png */,
+				0D012E763087B35B00BF6F5B /* Style.css */,
+				0D012E783087B35B00BF6F5B /* Script.js */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		0D012E8A3087B35D00BF6F5B /* YouTube Debloat Extension */ = {
+			isa = PBXGroup;
+			children = (
+				0D012E973087B35E00BF6F5B /* Resources */,
+				0D012E8B3087B35D00BF6F5B /* SafariWebExtensionHandler.swift */,
+				0D012E8D3087B35D00BF6F5B /* Info.plist */,
+			);
+			path = "YouTube Debloat Extension";
+			sourceTree = "<group>";
+		};
+		0D012E973087B35E00BF6F5B /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				0D012E983087B35E00BF6F5B /* icons */,
+				0D012E993087B35E00BF6F5B /* manifest.json */,
+				0D012E9A3087B35E00BF6F5B /* hide.css */,
+				0D012E9B3087B35E00BF6F5B /* inject.js */,
+				0D012E9C3087B35E00BF6F5B /* content.js */,
+			);
+			name = Resources;
+			path = "YouTube Debloat Extension";
+			sourceTree = SOURCE_ROOT;
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		0D012E6A3087B35B00BF6F5B /* YouTube Debloat */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 0D012E943087B35D00BF6F5B /* Build configuration list for PBXNativeTarget "YouTube Debloat" */;
+			buildPhases = (
+				0D012E673087B35B00BF6F5B /* Sources */,
+				0D012E683087B35B00BF6F5B /* Frameworks */,
+				0D012E693087B35B00BF6F5B /* Resources */,
+				0D012E933087B35D00BF6F5B /* Embed Foundation Extensions */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				0D012E893087B35D00BF6F5B /* PBXTargetDependency */,
+			);
+			name = "YouTube Debloat";
+			productName = "YouTube Debloat";
+			productReference = 0D012E6B3087B35B00BF6F5B /* YouTube Debloat.app */;
+			productType = "com.apple.product-type.application";
+		};
+		0D012E853087B35D00BF6F5B /* YouTube Debloat Extension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 0D012E903087B35D00BF6F5B /* Build configuration list for PBXNativeTarget "YouTube Debloat Extension" */;
+			buildPhases = (
+				0D012E823087B35D00BF6F5B /* Sources */,
+				0D012E833087B35D00BF6F5B /* Frameworks */,
+				0D012E843087B35D00BF6F5B /* Resources */,
+			);
+			buildRules = (
+			);
+			name = "YouTube Debloat Extension";
+			productName = "YouTube Debloat Extension";
+			productReference = 0D012E863087B35D00BF6F5B /* YouTube Debloat Extension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		0D012E633087B35B00BF6F5B /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 2710;
+				LastUpgradeCheck = 2710;
+				TargetAttributes = {
+					0D012E6A3087B35B00BF6F5B = {
+						CreatedOnToolsVersion = 27.1;
+					};
+					0D012E853087B35D00BF6F5B = {
+						CreatedOnToolsVersion = 27.1;
+					};
+				};
+			};
+			buildConfigurationList = 0D012E663087B35B00BF6F5B /* Build configuration list for PBXProject "YouTube Debloat" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 0D012E623087B35B00BF6F5B;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 0D012E6C3087B35B00BF6F5B /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				0D012E6A3087B35B00BF6F5B /* YouTube Debloat */,
+				0D012E853087B35D00BF6F5B /* YouTube Debloat Extension */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		0D012E693087B35B00BF6F5B /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			files = (
+				0D012E753087B35B00BF6F5B /* Icon.png in Resources */,
+				0D012E7E3087B35B00BF6F5B /* Main.storyboard in Resources */,
+				0D012E793087B35B00BF6F5B /* Script.js in Resources */,
+				0D012E733087B35B00BF6F5B /* Main.html in Resources */,
+				0D012E803087B35D00BF6F5B /* Assets.xcassets in Resources */,
+				0D012E773087B35B00BF6F5B /* Style.css in Resources */,
+			);
+		};
+		0D012E843087B35D00BF6F5B /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			files = (
+				0D012E9E3087B35E00BF6F5B /* manifest.json in Resources */,
+				0D012EA03087B35E00BF6F5B /* inject.js in Resources */,
+				0D012E9D3087B35E00BF6F5B /* icons in Resources */,
+				0D012E9F3087B35E00BF6F5B /* hide.css in Resources */,
+				0D012EA13087B35E00BF6F5B /* content.js in Resources */,
+			);
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		0D012E673087B35B00BF6F5B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			files = (
+				0D012E7B3087B35B00BF6F5B /* ViewController.swift in Sources */,
+				0D012E6F3087B35B00BF6F5B /* AppDelegate.swift in Sources */,
+			);
+		};
+		0D012E823087B35D00BF6F5B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			files = (
+				0D012E8C3087B35D00BF6F5B /* SafariWebExtensionHandler.swift in Sources */,
+			);
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		0D012E893087B35D00BF6F5B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 0D012E853087B35D00BF6F5B /* YouTube Debloat Extension */;
+			targetProxy = 0D012E883087B35D00BF6F5B /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		0D012E713087B35B00BF6F5B /* Main.html */ = {
+			isa = PBXVariantGroup;
+			children = (
+				0D012E723087B35B00BF6F5B /* Base */,
+			);
+			name = Main.html;
+			sourceTree = "<group>";
+		};
+		0D012E7C3087B35B00BF6F5B /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				0D012E7D3087B35B00BF6F5B /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		0D012E8E3087B35D00BF6F5B /* Debug configuration for PBXProject "YouTube Debloat" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 27.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		0D012E8F3087B35D00BF6F5B /* Release configuration for PBXProject "YouTube Debloat" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 27.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+			};
+			name = Release;
+		};
+		0D012E913087B35D00BF6F5B /* Debug configuration for PBXNativeTarget "YouTube Debloat Extension" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_USER_SELECTED_FILES = readonly;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "YouTube Debloat Extension/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "YouTube Debloat Extension";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
+				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = (
+					"-framework",
+					SafariServices,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "io.github.whydr4.youtube-debloat.Extension";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		0D012E923087B35D00BF6F5B /* Release configuration for PBXNativeTarget "YouTube Debloat Extension" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_USER_SELECTED_FILES = readonly;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "YouTube Debloat Extension/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "YouTube Debloat Extension";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
+				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = (
+					"-framework",
+					SafariServices,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "io.github.whydr4.youtube-debloat.Extension";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		0D012E953087B35D00BF6F5B /* Debug configuration for PBXNativeTarget "YouTube Debloat" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
+				ENABLE_USER_SELECTED_FILES = readonly;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "YouTube Debloat/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "YouTube Debloat";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INFOPLIST_KEY_NSMainStoryboardFile = Main;
+				INFOPLIST_KEY_NSPrincipalClass = NSApplication;
+				INFOPLIST_KEY_NSViewGestureRecognizerIsExclusive = NO;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = (
+					"-framework",
+					SafariServices,
+					"-framework",
+					WebKit,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "io.github.whydr4.youtube-debloat";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		0D012E963087B35D00BF6F5B /* Release configuration for PBXNativeTarget "YouTube Debloat" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
+				ENABLE_USER_SELECTED_FILES = readonly;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "YouTube Debloat/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "YouTube Debloat";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INFOPLIST_KEY_NSMainStoryboardFile = Main;
+				INFOPLIST_KEY_NSPrincipalClass = NSApplication;
+				INFOPLIST_KEY_NSViewGestureRecognizerIsExclusive = NO;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = (
+					"-framework",
+					SafariServices,
+					"-framework",
+					WebKit,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "io.github.whydr4.youtube-debloat";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		0D012E663087B35B00BF6F5B /* Build configuration list for PBXProject "YouTube Debloat" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0D012E8E3087B35D00BF6F5B /* Debug configuration for PBXProject "YouTube Debloat" */,
+				0D012E8F3087B35D00BF6F5B /* Release configuration for PBXProject "YouTube Debloat" */,
+			);
+			defaultConfigurationName = Release;
+		};
+		0D012E903087B35D00BF6F5B /* Build configuration list for PBXNativeTarget "YouTube Debloat Extension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0D012E913087B35D00BF6F5B /* Debug configuration for PBXNativeTarget "YouTube Debloat Extension" */,
+				0D012E923087B35D00BF6F5B /* Release configuration for PBXNativeTarget "YouTube Debloat Extension" */,
+			);
+			defaultConfigurationName = Release;
+		};
+		0D012E943087B35D00BF6F5B /* Build configuration list for PBXNativeTarget "YouTube Debloat" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0D012E953087B35D00BF6F5B /* Debug configuration for PBXNativeTarget "YouTube Debloat" */,
+				0D012E963087B35D00BF6F5B /* Release configuration for PBXNativeTarget "YouTube Debloat" */,
+			);
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 0D012E633087B35B00BF6F5B /* Project object */;
+	validationLevel = 1;
+}

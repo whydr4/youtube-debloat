@@ -1,0 +1,51 @@
+/* ───────── Реклама ───────── */
+#masthead-ad,
+#player-ads,
+ytd-ad-slot-renderer,
+ytd-in-feed-ad-layout-renderer,
+ytd-display-ad-renderer,
+ytd-promoted-sparkles-web-renderer,
+ytd-promoted-video-renderer,
+ytd-banner-promo-renderer,
+ytd-statement-banner-renderer,
+ytd-companion-slot-renderer,
+ytd-action-companion-ad-renderer,
+ytd-player-legacy-desktop-watch-ads-renderer,
+ytd-merch-shelf-renderer,
+ytd-rich-item-renderer:has(ytd-ad-slot-renderer),
+ytd-rich-section-renderer:has(ytd-statement-banner-renderer),
+ytd-engagement-panel-section-list-renderer[target-id="engagement-panel-ads"],
+.ytp-ad-overlay-container,
+.ytp-ad-text-overlay,
+.ytp-featured-product,
+/* попап «блокировщики рекламы запрещены» */
+ytd-enforcement-message-view-model,
+tp-yt-paper-dialog:has(ytd-enforcement-message-view-model) {
+  display: none !important;
+}
+
+/* ───────── Shorts ───────── */
+/* полки Shorts на главной, в поиске, в рекомендациях */
+ytd-reel-shelf-renderer,
+ytd-rich-shelf-renderer[is-shorts],
+ytd-rich-section-renderer:has(ytd-rich-shelf-renderer[is-shorts]),
+grid-shelf-view-model:has(ytm-shorts-lockup-view-model),
+grid-shelf-view-model:has(ytm-shorts-lockup-view-model-v2),
+ytd-item-section-renderer:has(> #contents > ytd-reel-shelf-renderer:only-child),
+ytm-shorts-lockup-view-model,
+ytm-shorts-lockup-view-model-v2,
+/* одиночные шортсы в ленте подписок, поиске, сайдбаре */
+ytd-rich-item-renderer:has(a[href^="/shorts/"]),
+ytd-video-renderer:has(a[href^="/shorts/"]),
+ytd-grid-video-renderer:has(a[href^="/shorts/"]),
+ytd-compact-video-renderer:has(a[href^="/shorts/"]),
+yt-lockup-view-model:has(a[href^="/shorts/"]),
+/* пункт «Shorts» в боковом меню */
+ytd-guide-entry-renderer:has(a[href="/shorts/"]),
+ytd-guide-entry-renderer:has(a[title="Shorts"]),
+ytd-mini-guide-entry-renderer:has(a[href="/shorts/"]),
+ytd-mini-guide-entry-renderer[aria-label="Shorts"],
+/* вкладка Shorts на странице канала */
+yt-tab-shape[tab-title="Shorts"] {
+  display: none !important;
+}
