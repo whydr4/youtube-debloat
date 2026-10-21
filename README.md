@@ -26,6 +26,7 @@ and a wall of vertical slop engineered to eat the next 40 minutes of your life.
 - ↪️ **`/shorts/…` links** quietly open in the normal player — with a seek bar, like a civilized video.
 - 🙈 **The "ad blockers are not allowed" nag** — hidden, and your video keeps playing.
 - 🎛️ **Three switches** in the toolbar button — ads, Shorts, Shorts redirect. That's the whole settings screen.
+- 🔄 **Updates itself.** New release out? It's on your Mac by tomorrow. You don't lift a finger.
 
 No account. No telemetry. No "Pro" tier. No remote filter lists. About 400 lines of code you can read over coffee.
 
@@ -47,33 +48,52 @@ It edits the instructions.
 
 ---
 
-## Install (build from source)
+## Install
 
-You need **macOS**, **Safari**, and **Xcode** (free from the App Store). No Apple Developer account required.
+Debloat isn't in the App Store — Apple wants $99/year and a review queue for the privilege of blocking
+YouTube ads, and we'd rather not. So you build it yourself. Sounds scary, takes one command.
+
+**You need:** a Mac on macOS 12+, Safari, and **Xcode** (free). No Apple Developer account, no sign-ups.
+
+### 1. Get Xcode
+
+Install **Xcode** from the [App Store](https://apps.apple.com/app/xcode/id497799835). It's huge — go make tea.
+**Open it once** and let it finish installing its components, then point the command-line tools at it:
 
 ```bash
-git clone https://github.com/whydr4/youtube-debloat.git
-cd youtube-debloat
-./scripts/build.sh --install
+sudo xcode-select -s /Applications/Xcode.app
 ```
 
-This builds `YouTube Debloat.app`, copies it to `~/Applications` and launches it.
-Then let Safari run it:
+### 2. Run the installer
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/whydr4/youtube-debloat/main/scripts/install.sh | bash
+```
+
+Piping the internet into `bash` makes you twitchy? Good instinct.
+[Read the script first](scripts/install.sh) — it's 90 lines — or do it the long way:
+
+```bash
+git clone https://github.com/whydr4/youtube-debloat.git && ./youtube-debloat/scripts/install.sh
+```
+
+Either way it grabs the **latest release**, builds it, drops `YouTube Debloat.app` into `~/Applications`,
+opens it, and switches on auto-update. First build takes a minute or two.
+
+### 3. Let Safari run it
 
 1. **Safari → Settings → Advanced** → tick **"Show features for web developers"**.
 2. **Safari → Settings → Developer** → tick **"Allow unsigned extensions"**.
 3. **Safari → Settings → Extensions** → enable **Debloat for YouTube** → allow it on `youtube.com`.
 4. Reload YouTube. Enjoy the silence.
 
-> **Heads-up:** a locally built (ad-hoc signed) extension is "unsigned" in Safari's eyes, and Safari
-> **turns "Allow unsigned extensions" off every time it quits.** After restarting Safari, re-tick
-> step 2. Annoying? Yes. Apple's rule, not ours.
-> If you have an Apple Developer account, open `xcode/YouTube Debloat.xcodeproj`,
-> pick your Team under *Signing & Capabilities*, and build from Xcode instead.
+> **The one annoying part:** a self-built extension is "unsigned" in Safari's eyes, and Safari
+> **turns "Allow unsigned extensions" off every time it quits.** After restarting Safari, re-tick step 2.
+> Annoying? Yes. Apple's rule, not ours. Got an Apple Developer account? Open
+> `xcode/YouTube Debloat.xcodeproj`, pick your Team under *Signing & Capabilities*, build from Xcode, and
+> the problem goes away.
 
-Only want the app in `./dist` without installing? Run `./scripts/build.sh`.
-
-### Check that it's alive
+### 4. Check that it's alive
 
 Open YouTube, then **Develop → Show JavaScript Console** and look for:
 
@@ -85,6 +105,39 @@ Open YouTube, then **Develop → Show JavaScript Console** and look for:
 - `FAILED` / `blocked` — Safari wouldn't let the hooks into the page. Feed ads and Shorts are still gone,
   video ads get auto-skipped instead of never existing. Please [open an issue](https://github.com/whydr4/youtube-debloat/issues)
   with your macOS and Safari versions.
+
+---
+
+## Updates
+
+You don't do anything. The installer sets up a tiny launchd job that wakes up **at every login and once a day**,
+asks GitHub "is there a new release?", and if there is — rebuilds and reinstalls the app quietly in the background.
+No resident process, no menu-bar icon, nothing running between checks.
+
+- Only **releases** ship (`vX.Y.Z` tags). Random commits on `main` and pre-releases like `v2.0.0-beta` never reach you.
+- Safari picks up the new build **on its next launch**. The toolbar popup then tells you once:
+  *"Updated to v1.2.0 — what's new →"*.
+- Log of every check: `~/Library/Logs/YouTube Debloat.log`.
+
+Can't wait for tomorrow?
+
+```bash
+bash ~/Library/Application\ Support/YouTube\ Debloat/src/scripts/update.sh
+```
+
+Don't want auto-update at all? Reinstall without it:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/whydr4/youtube-debloat/main/scripts/install.sh | bash -s -- --no-auto-update
+```
+
+## Uninstall
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/whydr4/youtube-debloat/main/scripts/install.sh | bash -s -- --uninstall
+```
+
+Removes the app, the updater and its build cache. No leftovers, no "are you sure you want to leave?" survey.
 
 ---
 
@@ -112,8 +165,10 @@ Yes. Click the Debloat button in Safari's toolbar on youtube.com — three switc
 *Hide Shorts*, *Open Shorts as videos*. Changes apply immediately, no reload.
 
 **Does it collect anything?**
-No. There's no network code, no analytics. The only thing stored is the state of those three switches,
-locally in Safari. Read `extension/` — it's a handful of files.
+No. The extension has zero network code, zero analytics. The only thing it stores is the state of those three
+switches, locally in Safari. The only thing that ever talks to the internet is the updater, and all it does is
+`git ls-remote` against this repo once a day to see if there's a new tag. Read `extension/` and `scripts/` —
+it's a handful of files.
 
 **Is this legal?**
 Blocking content in your own browser is your business. It does break YouTube's Terms of Service,
@@ -137,10 +192,32 @@ extension/         ← the actual extension (edit these)
 assets/            ← icon sources (SVG)
 xcode/             ← Safari app wrapper (references ../extension, no copies)
 scripts/
-  build.sh         ← one-command build
+  install.sh       ← installer: latest release + auto-update (also --uninstall)
+  update.sh        ← what the daily launchd job runs
+  build.sh         ← build your working copy (for hacking)
   make-icon-svg.py ← regenerates assets/*.svg
   make-icons.swift ← rasterises them into every PNG size
 ```
+
+## Hacking on it
+
+```bash
+git clone https://github.com/whydr4/youtube-debloat.git
+cd youtube-debloat
+./scripts/build.sh --install
+```
+
+That builds **your working copy** straight into `~/Applications` — edit, rebuild, reload YouTube.
+The updater leaves it alone until the next release comes out, then replaces it with that.
+Hacking for a while? Turn auto-update off (see above).
+
+### Cutting a release
+
+1. Bump `version` in `extension/manifest.json` (that's what the "Updated to …" note shows).
+2. Commit, tag, push: `git tag v1.2.0 && git push origin main v1.2.0`.
+3. Write the notes on GitHub → *Releases* — that's where "what's new" links to.
+
+The tag is what ships: within a day, every install with auto-update builds it.
 
 ## Contributing
 

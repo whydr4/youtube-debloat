@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Builds "YouTube Debloat.app" with an ad-hoc signature (no Apple Developer account needed)
-# and drops it into ./dist. Usage: ./scripts/build.sh [--install]
+# and drops it into ./dist. Usage: ./scripts/build.sh [--install [--no-launch]]
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
@@ -38,6 +38,13 @@ echo "✔ Built: dist/$APP"
 if [[ "${1:-}" == "--install" ]]; then
   mkdir -p "$HOME/Applications"
   install_app "$ROOT/dist/$APP" "$HOME/Applications/$APP"
-  open "$HOME/Applications/$APP"
-  echo "✔ Installed to ~/Applications and launched. Now enable it in Safari → Settings → Extensions."
+  # Tell LaunchServices (and so Safari) about the new bundle without opening it.
+  /System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister \
+    -f "$HOME/Applications/$APP"
+  if [[ "${2:-}" == "--no-launch" ]]; then
+    echo "✔ Installed to ~/Applications."
+  else
+    open "$HOME/Applications/$APP"
+    echo "✔ Installed to ~/Applications and launched. Now enable it in Safari → Settings → Extensions."
+  fi
 fi
