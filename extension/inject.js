@@ -17,7 +17,10 @@
   const AD_KEYS = ["adPlacements", "adSlots", "playerAds", "adBreakHeartbeatParams"];
   const NAG_KEYS = ["enforcementMessageViewModel", "upsellDialogRenderer"];
   const AD_URL = /\/youtubei\/v1\/(player|next|get_watch|reel\/reel_watch_sequence)\b/;
-  const AD_TEXT = /"(adPlacements|adSlots|playerAds|adBreakHeartbeatParams)"/g;
+  // "Video paused. Continue watching?" — the server sends it with the response
+  // when the request says the viewer has been idle (see lactMilliseconds below).
+  const IDLE_KEYS = ["youThereRenderer", "youThereData"];
+  const AD_TEXT = /"(adPlacements|adSlots|playerAds|adBreakHeartbeatParams|youThereRenderer|youThereData)"/g;
   // Longest key above, with quotes — how much text to hold back between chunks.
   const CARRY = 32;
 
@@ -29,6 +32,8 @@
     }
     const nags = obj.auxiliaryUi && obj.auxiliaryUi.messageRenderers;
     if (nags) for (const key of NAG_KEYS) delete nags[key];
+    if (Array.isArray(obj.messages)) obj.messages = obj.messages.filter((m) => !IDLE_KEYS.some((k) => m && k in m));
+    for (const key of IDLE_KEYS) if (key in obj) delete obj[key];
     // /youtubei/v1/player can be wrapped: { playerResponse: {...} }
     if (obj.playerResponse) prune(obj.playerResponse);
     return obj;
@@ -38,6 +43,31 @@
   // the keys stay valid JSON but the player no longer recognises them.
   const scrub = (text) => (typeof text === "string" ? text.replace(AD_TEXT, '"no_ads"') : text);
   const isAdUrl = (url) => AD_URL.test(String(url));
+
+  // Stripping ads from the response is too late on its own: once the server has
+  // planned a pre-roll, the media stream it hands out carries a SABR backoff of
+  // ~80% of the ad's length, so the video sits black for that long after the ad
+  // is gone. Telling the server the viewer has been idle for an hour
+  // (contentPlaybackContext.lactMilliseconds) makes it plan no ad at all — and so
+  // no backoff. uBO uses the same field, but only after the player has already
+  // stalled; here it goes into the first request. The side effect is a
+  // "Video paused. Continue watching?" prompt, which IDLE_KEYS strips below.
+  // isInlinePlaybackNoAd, the older trick, no longer has any effect.
+  const PLAYER_URL = /\/youtubei\/v1\/(player|get_watch)\b/;
+  const IDLE_MS = "3600000";
+  const flagRequest = (body) => {
+    if (typeof body !== "string" || !body.includes('"contentPlaybackContext"')) return body;
+    try {
+      const o = JSON.parse(body);
+      const pr = o.playerRequest || o; // get_watch wraps the player request
+      const cpc = pr.playbackContext && pr.playbackContext.contentPlaybackContext;
+      if (!cpc) return body;
+      cpc.lactMilliseconds = IDLE_MS;
+      return JSON.stringify(o);
+    } catch (_) {
+      return body;
+    }
+  };
 
   // Streaming scrubber: rewrites the body chunk by chunk, so YouTube keeps
   // getting bytes as they arrive instead of waiting for the whole response.
@@ -147,9 +177,29 @@
     // 2. fetch — rewrite bodies of player/next responses on the fly.
     const origFetch = win.fetch;
     win.fetch = async function (input, init) {
+      const url = typeof input === "string" ? input : input && input.url;
+      if (adsEnabled() && PLAYER_URL.test(String(url))) {
+        try {
+          if (init && typeof init.body === "string") {
+            init = { ...init, body: flagRequest(init.body) };
+          } else if (input instanceof win.Request && !(init && init.body)) {
+            // YouTube gzips request bodies (content-encoding: gzip); unpack,
+            // flag, and send the JSON uncompressed — the server takes either.
+            const gzip = /gzip/i.test(input.headers.get("content-encoding") || "");
+            const raw = gzip
+              ? await new win.Response(input.clone().body.pipeThrough(new win.DecompressionStream("gzip"))).text()
+              : await input.clone().text();
+            const flagged = flagRequest(raw);
+            if (flagged !== raw) {
+              const headers = new win.Headers(input.headers);
+              headers.delete("content-encoding");
+              input = new win.Request(input, { body: flagged, headers });
+            }
+          }
+        } catch (_) { /* send it as is */ }
+      }
       const res = await origFetch.call(this, input, init);
       if (!adsEnabled() || !res.body) return res;
-      const url = typeof input === "string" ? input : input && input.url;
       const ump = res.status === 200 && /\/videoplayback\b/.test(String(url)) && isUmp(res);
       if (!isAdUrl(url) && !ump) return res;
       try {
@@ -171,8 +221,14 @@
     const origOpen = XHR.open;
     XHR.open = function (method, url, ...rest) {
       this.__ytDebloatAd = isAdUrl(url);
+      this.__ytDebloatPlayer = PLAYER_URL.test(String(url));
       this.__ytDebloatCache = undefined;
       return origOpen.call(this, method, url, ...rest);
+    };
+    const origSend = XHR.send;
+    XHR.send = function (body) {
+      if (this.__ytDebloatPlayer && adsEnabled()) body = flagRequest(body);
+      return origSend.call(this, body);
     };
     for (const prop of ["responseText", "response"]) {
       const desc = Object.getOwnPropertyDescriptor(XHR, prop);
@@ -217,14 +273,47 @@
   guardInsert(Node.prototype, "insertBefore");
   guardInsert(Element.prototype, "append");
 
-  // 5. Inline `var ytInitialPlayerResponse = {...}` on first page load.
+  // 5. Inline `var ytInitialPlayerResponse = {...}` on first page load. The server
+  //    embeds it in the HTML with the ad (and the backoff) already planned, and
+  //    no request of ours is involved. Dropping it breaks playback (the player's
+  //    own refetch has no attestation and media gets 403), so keep it, and as
+  //    soon as the player is up, reload the same video once: that /player
+  //    request carries lactMilliseconds and comes back without the backoff.
+  //    Skipped for live streams and playlists (reloading loses the playlist).
+  const hasAds = (r) => r && typeof r === "object" && AD_KEYS.some((k) => k in r);
+  const isLive = (r) => !!(r && r.videoDetails && (r.videoDetails.isLive || r.videoDetails.isLiveContent));
+  const startSeconds = (r) => {
+    const cfg = r.playerConfig && r.playerConfig.playbackStartConfig;
+    if (cfg && cfg.startSeconds) return Number(cfg.startSeconds) || 0;
+    const t = new URLSearchParams(location.search).get("t") || "";
+    const m = t.match(/^(?:(\d+)h)?(?:(\d+)m)?(?:(\d+)s?)?$/);
+    return m ? (+m[1] || 0) * 3600 + (+m[2] || 0) * 60 + (+m[3] || 0) : 0;
+  };
+  let reloadScheduled = false;
+  const reloadWithoutBackoff = (r) => {
+    const id = r.videoDetails && r.videoDetails.videoId;
+    if (reloadScheduled || !id || location.pathname !== "/watch" || new URLSearchParams(location.search).has("list")) return;
+    reloadScheduled = true;
+    const start = startSeconds(r);
+    const deadline = Date.now() + 15000;
+    const timer = setInterval(() => {
+      const p = document.getElementById("movie_player");
+      if (Date.now() > deadline || !adsEnabled()) return clearInterval(timer);
+      if (!p || !p.loadVideoById || !p.getVideoData || p.getVideoData().video_id !== id) return;
+      clearInterval(timer);
+      p.loadVideoById(id, start);
+    }, 100);
+  };
   const trap = (name) => {
     let value;
     try {
       Object.defineProperty(window, name, {
         configurable: true,
         get: () => value,
-        set: (v) => { value = prune(v); },
+        set: (v) => {
+          if (adsEnabled() && hasAds(v) && !isLive(v)) reloadWithoutBackoff(v);
+          value = prune(v);
+        },
       });
     } catch (_) { /* already defined non-configurably — DOM skipper still covers it */ }
   };
