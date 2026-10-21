@@ -51,36 +51,33 @@ It edits the instructions.
 ## Install
 
 Debloat isn't in the App Store — Apple wants $99/year and a review queue for the privilege of blocking
-YouTube ads, and we'd rather not. So you build it yourself. Sounds scary, takes one command.
+YouTube ads, and we'd rather not. So it ships straight from GitHub. One command.
 
-**You need:** a Mac on macOS 12+, Safari, and **Xcode** (free). No Apple Developer account, no sign-ups.
+**You need:** a Mac on macOS 12+ and Safari. No Xcode, no Apple Developer account, no sign-ups.
 
-### 1. Get Xcode
-
-Install **Xcode** from the [App Store](https://apps.apple.com/app/xcode/id497799835). It's huge — go make tea.
-**Open it once** and let it finish installing its components, then point the command-line tools at it:
-
-```bash
-sudo xcode-select -s /Applications/Xcode.app
-```
-
-### 2. Run the installer
+### 1. Run the installer
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/whydr4/youtube-debloat/main/scripts/install.sh | bash
 ```
 
 Piping the internet into `bash` makes you twitchy? Good instinct.
-[Read the script first](scripts/install.sh) — it's 90 lines — or do it the long way:
+[Read the script first](scripts/install.sh) — it's about 120 lines.
+
+It downloads the **latest release** (built from the tagged source by
+[GitHub Actions](.github/workflows/release.yml), you can check the run log), drops `YouTube Debloat.app`
+into `~/Applications`, opens it, and switches on auto-update. Takes a few seconds.
+
+Rather build it yourself from source? Install [Xcode](https://apps.apple.com/app/xcode/id497799835),
+open it once, run `sudo xcode-select -s /Applications/Xcode.app`, then add `--from-source`:
 
 ```bash
-git clone https://github.com/whydr4/youtube-debloat.git && ./youtube-debloat/scripts/install.sh
+curl -fsSL https://raw.githubusercontent.com/whydr4/youtube-debloat/main/scripts/install.sh | bash -s -- --from-source
 ```
 
-Either way it grabs the **latest release**, builds it, drops `YouTube Debloat.app` into `~/Applications`,
-opens it, and switches on auto-update. First build takes a minute or two.
+Auto-update then rebuilds every new release from source too.
 
-### 3. Let Safari run it
+### 2. Let Safari run it
 
 1. **Safari → Settings → Advanced** → tick **"Show features for web developers"**.
 2. **Safari → Settings → Developer** → tick **"Allow unsigned extensions"**.
@@ -88,12 +85,12 @@ opens it, and switches on auto-update. First build takes a minute or two.
 4. Reload YouTube. Enjoy the silence.
 
 > **The one annoying part:** a self-built extension is "unsigned" in Safari's eyes, and Safari
-> **turns "Allow unsigned extensions" off every time it quits.** After restarting Safari, re-tick step 2.
+> **turns "Allow unsigned extensions" off every time it quits.** After restarting Safari, re-tick the second step.
 > Annoying? Yes. Apple's rule, not ours. Got an Apple Developer account? Open
 > `xcode/YouTube Debloat.xcodeproj`, pick your Team under *Signing & Capabilities*, build from Xcode, and
 > the problem goes away.
 
-### 4. Check that it's alive
+### 3. Check that it's alive
 
 Open YouTube, then **Develop → Show JavaScript Console** and look for:
 
@@ -111,7 +108,7 @@ Open YouTube, then **Develop → Show JavaScript Console** and look for:
 ## Updates
 
 You don't do anything. The installer sets up a tiny launchd job that wakes up **at every login and once a day**,
-asks GitHub "is there a new release?", and if there is — rebuilds and reinstalls the app quietly in the background.
+asks GitHub "is there a new release?", and if there is — downloads and reinstalls the app quietly in the background.
 No resident process, no menu-bar icon, nothing running between checks.
 
 - Only **releases** ship (`vX.Y.Z` tags). Random commits on `main` and pre-releases like `v2.0.0-beta` never reach you.
@@ -122,8 +119,10 @@ No resident process, no menu-bar icon, nothing running between checks.
 Can't wait for tomorrow?
 
 ```bash
-bash ~/Library/Application\ Support/YouTube\ Debloat/src/scripts/update.sh
+bash ~/Library/Application\ Support/YouTube\ Debloat/update.sh
 ```
+
+(Installed with `--from-source`? It's `…/YouTube Debloat/src/scripts/update.sh`.)
 
 Don't want auto-update at all? Reinstall without it:
 
@@ -137,7 +136,7 @@ curl -fsSL https://raw.githubusercontent.com/whydr4/youtube-debloat/main/scripts
 curl -fsSL https://raw.githubusercontent.com/whydr4/youtube-debloat/main/scripts/install.sh | bash -s -- --uninstall
 ```
 
-Removes the app, the updater and its build cache. No leftovers, no "are you sure you want to leave?" survey.
+Removes the app and the updater. No leftovers, no "are you sure you want to leave?" survey.
 
 ---
 
@@ -171,7 +170,7 @@ Yes. Click the Debloat button in Safari's toolbar on youtube.com — three switc
 **Does it collect anything?**
 No. The extension has zero network code, zero analytics. The only thing it stores is the state of those three
 switches, locally in Safari. The only thing that ever talks to the internet is the updater, and all it does is
-`git ls-remote` against this repo once a day to see if there's a new tag. Read `extension/` and `scripts/` —
+ask GitHub once a day which release is the latest, and download it if it's new. Read `extension/` and `scripts/` —
 it's a handful of files.
 
 **Is this legal?**
@@ -195,8 +194,10 @@ extension/         ← the actual extension (edit these)
   icons/
 assets/            ← icon sources (SVG)
 xcode/             ← Safari app wrapper (references ../extension, no copies)
+.github/workflows/
+  release.yml      ← builds the app for every release tag
 scripts/
-  install.sh       ← installer: latest release + auto-update (also --uninstall)
+  install.sh       ← installer: latest release + auto-update (--from-source, --uninstall)
   update.sh        ← what the daily launchd job runs
   build.sh         ← build your working copy (for hacking)
   make-icon-svg.py ← regenerates assets/*.svg
@@ -219,9 +220,11 @@ Hacking for a while? Turn auto-update off (see above).
 
 1. Bump `version` in `extension/manifest.json` (that's what the "Updated to …" note shows).
 2. Commit, tag, push: `git tag v1.2.0 && git push origin main v1.2.0`.
-3. Write the notes on GitHub → *Releases* — that's where "what's new" links to.
+3. GitHub Actions builds the app and attaches `YouTube-Debloat.zip` to the release (it fails if the tag and
+   `manifest.json` disagree). A rebuild of an existing tag: *Actions → Release build → Run workflow*.
+4. Write the notes on GitHub → *Releases* — that's where "what's new" links to.
 
-The tag is what ships: within a day, every install with auto-update builds it.
+The tag is what ships: within a day, every install with auto-update picks it up.
 
 ## Contributing
 

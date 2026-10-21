@@ -1,0 +1,58 @@
+name: Release build
+
+on:
+  push:
+    tags: ['v*']
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Existing tag to (re)build, e.g. v1.2.0
+        required: true
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-${{ inputs.tag || github.ref_name }}
+
+jobs:
+  build:
+    runs-on: macos-26
+    env:
+      TAG: ${{ inputs.tag || github.ref_name }}
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: refs/tags/${{ env.TAG }}
+
+      - uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: latest-stable
+
+      - name: Build
+        run: |
+          xcodebuild -version
+          ./scripts/build.sh
+
+      - name: Check
+        run: |
+          app="dist/YouTube Debloat.app"
+          lipo -archs "$app/Contents/MacOS/YouTube Debloat"
+          codesign --verify --deep --strict "$app"
+          v="$(plutil -extract version raw extension/manifest.json)"
+          [[ "v$v" == "${TAG%%-*}" ]] || { echo "manifest.json says $v, tag is $TAG"; exit 1; }
+
+      - name: Zip
+        run: ditto -c -k --keepParent --noextattr "dist/YouTube Debloat.app" YouTube-Debloat.zip
+
+      - name: Publish
+        run: |
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            gh release upload "$TAG" YouTube-Debloat.zip --clobber
+          else
+            pre=false; [[ "$TAG" == *-* ]] && pre=true
+            gh release create "$TAG" YouTube-Debloat.zip --verify-tag --title "$TAG" --notes "" --prerelease="$pre"
+          fi
