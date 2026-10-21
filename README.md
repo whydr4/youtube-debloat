@@ -143,11 +143,15 @@ Removes the app, the updater and its build cache. No leftovers, no "are you sure
 
 ## FAQ
 
-**Why does the first video of a session take ~10 seconds to start?**
-Because YouTube wanted to show you a pre-roll. Since 2025 its streaming server holds the video back for
-exactly the length of the ad it didn't get to play — a signed, server-side timer that no client-side trick
-can skip (we tried: resending the request just gets another "wait"). Without Debloat you'd watch a 10-second
-ad; with it you watch a 10-second spinner, minus the toast. Later videos in the same tab start instantly.
+**Didn't the first video use to sit on a black screen for ~10 seconds?**
+It did, and since 1.2.0 it doesn't. YouTube's streaming server holds the video back for most of the length of
+the ad it planned for you — cut the ad out of the response and you still sit through the wait, just without the
+ad. Turns out the server won't plan an ad for a viewer it thinks walked away an hour ago. So every player request
+now tells it exactly that, there's no ad and no wait. The "Video paused. Continue watching?" prompt that comes
+with being "idle" gets stripped too.
+The very first video of a fresh page load is the stubborn one: it arrives baked into the HTML with the ad already
+planned, so Debloat quietly reloads it once, the right way, and it starts clean. Live streams and playlists
+skip that reload (it would lose your place in the playlist), so those can still make you wait the old way.
 
 **Will YouTube break this?**
 Probably — sooner or later. YouTube changes its markup and ad delivery constantly, and Google has been
