@@ -32,6 +32,9 @@ jobs:
         with:
           xcode-version: latest-stable
 
+      - name: Test
+        run: node --test tests/enforcement.test.cjs
+
       - name: Build
         run: |
           xcodebuild -version

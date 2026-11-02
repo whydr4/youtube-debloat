@@ -22,11 +22,19 @@ html:not([data-ytd-ads="off"]) :is(
   .ytp-ad-overlay-container,
   .ytp-ad-text-overlay,
   .ytp-featured-product,
-  /* попап «блокировщики рекламы запрещены» */
-  ytd-enforcement-message-view-model,
+  /* Only hide dismissible modal warnings. A player enforcement error has no
+     playable media behind it and must stay visible instead of a black screen. */
   tp-yt-paper-dialog:has(ytd-enforcement-message-view-model)
 ) {
   display: none !important;
+}
+
+/* Applied only after a blocked player recovers and decodes actual video frames. */
+ytd-watch-flexy[data-yt-debloat-recovered] #error-screen {
+  display: none !important;
+}
+ytd-watch-flexy[data-yt-debloat-recovered] #player-container {
+  visibility: visible !important;
 }
 
 /* ───────── Shorts ───────── */

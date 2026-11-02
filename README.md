@@ -25,10 +25,11 @@ and a wall of vertical slop engineered to eat the next 40 minutes of your life.
 - ✂️ **Shorts. All of them.** Shelves, feed items, search results, sidebar entry, channel tab, filter chip.
 - ↪️ **`/shorts/…` links** quietly open in the normal player — with a seek bar, like a civilized video.
 - 🙈 **The "ad blockers are not allowed" nag** — hidden, and your video keeps playing.
+- 🪶 **A lighter page** — no ambient-mode glow, no pre-loading the next video before you've picked it, no session-replay recording.
 - 🎛️ **Three switches** in the toolbar button — ads, Shorts, Shorts redirect. That's the whole settings screen.
 - 🔄 **Updates itself.** New release out? It's on your Mac by tomorrow. You don't lift a finger.
 
-No account. No telemetry. No "Pro" tier. No remote filter lists. About 400 lines of code you can read over coffee.
+No account. No telemetry. No "Pro" tier. No remote filter lists. A few small scripts you can read over coffee.
 
 ---
 
@@ -45,6 +46,8 @@ It edits the instructions.
 | **3. Auto-skip safety net** (`content.js`) | If an ad ever slips through, it's muted, fast-forwarded to the end and its skip button is clicked — in the same animation frame it appears. Watches only the player's `class`, not the whole page, so it costs nothing while you watch. |
 | **4. CSS guillotine** (`hide.css`) | Feed ads and every Shorts surface get `display: none`. Modern `:has()` selectors, no layout jank. |
 | **5. Stream filter** (`inject.js`) | YouTube's media protocol (SABR/UMP) carries commands next to the video bytes. The one that pops the "Something went wrong" toast is dropped in flight; the bytes go through untouched. |
+| **6. Flag overrides** (`inject.js`) | YouTube's app and player check experiment flags from `ytcfg` before turning features on. Debloat catches the config as the page hands it over and switches off ambient mode, next-video prefetch and session replay. Always on, whatever the switches say. |
+| **7. Playback recovery** | Closes hidden warning dialogs properly so their backdrop cannot trap the page. If YouTube rejects the initial player response, reuses a loaded preview of the same video or retries once with the normal player request. The error screen goes away only after video frames arrive. |
 
 ---
 
@@ -113,7 +116,7 @@ No resident process, no menu-bar icon, nothing running between checks.
 
 - Only **releases** ship (`vX.Y.Z` tags). Random commits on `main` and pre-releases like `v2.0.0-beta` never reach you.
 - Safari picks up the new build **on its next launch**. The toolbar popup then tells you once:
-  *"Updated to v1.2.0 — what's new →"*.
+  *"Updated to v1.2.1 — what's new →"*.
 - Log of every check: `~/Library/Logs/YouTube Debloat.log`.
 
 Can't wait for tomorrow?
@@ -143,7 +146,7 @@ Removes the app and the updater. No leftovers, no "are you sure you want to leav
 ## FAQ
 
 **Didn't the first video use to sit on a black screen for ~10 seconds?**
-It did, and since 1.2.0 it doesn't. YouTube's streaming server holds the video back for most of the length of
+Version 1.2.0 addressed that delay. YouTube's streaming server holds the video back for most of the length of
 the ad it planned for you — cut the ad out of the response and you still sit through the wait, just without the
 ad. Turns out the server won't plan an ad for a viewer it thinks walked away an hour ago. So every player request
 now tells it exactly that, there's no ad and no wait. The "Video paused. Continue watching?" prompt that comes
@@ -151,6 +154,12 @@ with being "idle" gets stripped too.
 The very first video of a fresh page load is the stubborn one: it arrives baked into the HTML with the ad already
 planned, so Debloat quietly reloads it once, the right way, and it starts clean. Live streams and playlists
 skip that reload (it would lose your place in the playlist), so those can still make you wait the old way.
+
+YouTube can also reject the initial player response after the page has loaded. Since 1.2.1, Debloat tries one
+normal player request when that happens, keeping the same idle setting. No alternate player params or client
+spoofing. A loaded preview of the same video can be reused too. The picture is shown only after frames arrive;
+if recovery fails, the error stays visible. That retry still takes network time, and live streams and playlists
+do not use it. It is not a promise that every video will start instantly.
 
 **Will YouTube break this?**
 Probably — sooner or later. YouTube changes its markup and ad delivery constantly, and Google has been
@@ -219,7 +228,7 @@ Hacking for a while? Turn auto-update off (see above).
 ### Cutting a release
 
 1. Bump `version` in `extension/manifest.json` (that's what the "Updated to …" note shows).
-2. Commit, tag, push: `git tag v1.2.0 && git push origin main v1.2.0`.
+2. Commit, tag, push: `git tag v1.2.1 && git push origin main v1.2.1`.
 3. GitHub Actions builds the app and attaches `YouTube-Debloat.zip` to the release (it fails if the tag and
    `manifest.json` disagree). A rebuild of an existing tag: *Actions → Release build → Run workflow*.
 4. Write the notes on GitHub → *Releases* — that's where "what's new" links to.

@@ -14,6 +14,105 @@
   // toggle in the popup takes effect on the next request, no reload needed.
   const adsEnabled = () => root.dataset.ytdAds !== "off";
 
+  // CSS can hide the warning without closing its modal overlay. Polymer's
+  // close() lives in the page world; the isolated content script cannot call it.
+  document.addEventListener("yt-debloat-dismiss-enforcement", () => {
+    if (!adsEnabled()) return;
+    for (const popup of document.querySelectorAll("ytd-enforcement-message-view-model")) {
+      const dialog = popup.closest("tp-yt-paper-dialog");
+      if (!dialog || !dialog.opened || typeof dialog.close !== "function") continue;
+      dialog.close();
+      // Resume only after closing an active enforcement dialog, never on
+      // ordinary DOM changes (which would undo the viewer's own pause).
+      const video = document.querySelector(".html5-video-player video");
+      if (video && video.paused) video.play().catch(() => {});
+    }
+  });
+
+  // The watch player can be rejected while YouTube's inline preview has
+  // already loaded the same video successfully. Reuse that exact response;
+  // do not substitute responses from recommendations or invent stream URLs.
+  let recoveryAttempts = new WeakMap();
+  let recoveryStartedAt = null;
+  const beginRecovery = (player, id, mode) => {
+    recoveryAttempts.set(player, id);
+    recoveryStartedAt = Date.now();
+    root.dataset.ytDebloatRecoveryMode = mode;
+    delete root.dataset.ytDebloatRecoveryMs;
+  };
+  const revealRecoveredPlayer = (player, id) => {
+    const watch = document.querySelector("ytd-watch-flexy");
+    if (!watch) return;
+    const video = player?.querySelector("video");
+    const response = player?.getPlayerResponse?.();
+    const ok = response?.playabilityStatus?.status === "OK" && response.videoDetails?.videoId === id;
+    if (watch.dataset.ytDebloatRecovered &&
+        (!ok || watch.dataset.ytDebloatRecovered !== id)) {
+      delete watch.dataset.ytDebloatRecovered;
+    }
+    if (recoveryAttempts.get(player) === id && ok && video?.readyState >= 2 && video.videoWidth > 0) {
+      // The watch page retains its error state even after the player recovers.
+      // Reveal it only when actual video frames have arrived.
+      watch.removeAttribute("player-unavailable");
+      watch.dataset.ytDebloatRecovered = id;
+      if (recoveryStartedAt !== null) {
+        root.dataset.ytDebloatRecoveryMs = String(Date.now() - recoveryStartedAt);
+        recoveryStartedAt = null;
+      }
+    }
+  };
+  const recoverBlockedPlayer = () => {
+    if (location.pathname !== "/watch") return;
+    const id = new URLSearchParams(location.search).get("v");
+    const player = document.getElementById("movie_player");
+    if (!player) return;
+    revealRecoveredPlayer(player, id);
+    if (!adsEnabled()) return;
+    const currentResponse = player.getPlayerResponse?.();
+    const blocked = currentResponse?.playabilityStatus;
+    if (!id || blocked?.status !== "ERROR" || !blocked.errorScreen?.enforcementMessageViewModel) return;
+    if (recoveryAttempts.get(player) === id) return;
+    const preview = document.getElementById("inline-preview-player");
+    const response = preview?.getPlayerResponse?.();
+    const matchingPreview = response?.playabilityStatus?.status === "OK" && response.videoDetails?.videoId === id && response.streamingData;
+    if (!matchingPreview) {
+      // The inline bootstrap can be rejected locally even though a normal
+      // attested /player request works. Keep the original idle request flag;
+      // no alternate params or client identity, and only one retry per visit.
+      if (new URLSearchParams(location.search).has("list") || isLive(currentResponse)) return;
+      if (typeof player.loadVideoById !== "function") return;
+      beginRecovery(player, id, "normal-request");
+      const currentTime = player.getVideoData?.()?.video_id === id ? Number(player.getCurrentTime?.()) || 0 : 0;
+      try { player.loadVideoById(id, Math.max(currentTime, startSeconds({}))); } catch (_) { /* retain the error */ }
+      return;
+    }
+    if (typeof player.loadVideoByPlayerVars !== "function") return;
+    // A failed recovery must not cause a reload loop on every DOM mutation.
+    beginRecovery(player, id, "loaded-preview");
+    const params = new URLSearchParams(location.search);
+    const vars = {
+      video_id: id,
+      player_response: JSON.stringify(response),
+      start: Math.max(Number(player.getCurrentTime?.()) || 0, startSeconds(response)),
+      autoplay: 1,
+    };
+    if (params.has("list")) vars.list = params.get("list");
+    if (params.has("index")) vars.index = params.get("index");
+    try { player.loadVideoByPlayerVars(vars); } catch (_) { /* keep the original error visible */ }
+  };
+  document.addEventListener("yt-debloat-recover-player", recoverBlockedPlayer);
+  document.addEventListener("yt-navigate-start", () => {
+    recoveryAttempts = new WeakMap();
+    recoveryStartedAt = null;
+    delete root.dataset.ytDebloatRecoveryMode;
+    delete root.dataset.ytDebloatRecoveryMs;
+    const watch = document.querySelector("ytd-watch-flexy");
+    if (watch) delete watch.dataset.ytDebloatRecovered;
+  });
+  document.addEventListener("loadeddata", recoverBlockedPlayer, true);
+  document.addEventListener("playing", recoverBlockedPlayer, true);
+  document.addEventListener("yt-navigate-finish", recoverBlockedPlayer);
+
   const AD_KEYS = ["adPlacements", "adSlots", "playerAds", "adBreakHeartbeatParams"];
   const NAG_KEYS = ["enforcementMessageViewModel", "upsellDialogRenderer"];
   const AD_URL = /\/youtubei\/v1\/(player|next|get_watch|reel\/reel_watch_sequence)\b/;
@@ -168,6 +267,19 @@
   const isUmp = (res) => /vnd\.yt-ump/.test(res.headers.get("content-type") || "");
 
   const patchRealm = (win) => {
+    // YouTube's async ad-block probe schedules this callback before creating
+    // the player. Defuse only that callback; preserve normal promise handling.
+    // Detection signature tracked by uAssets filters/quick-fixes.txt.
+    const originalThen = win.Promise.prototype.then;
+    const functionSource = win.Function.prototype.toString;
+    win.Promise.prototype.then = function (fulfilled, rejected) {
+      if (adsEnabled() && typeof fulfilled === "function" &&
+          functionSource.call(fulfilled).includes("onAbnormalityDetected")) {
+        fulfilled = () => undefined;
+      }
+      return originalThen.call(this, fulfilled, rejected);
+    };
+
     // 1. JSON.parse — covers anything parsed from strings.
     const origParse = win.JSON.parse;
     win.JSON.parse = function (...args) {
@@ -321,4 +433,72 @@
 
   // 6. Tell YouTube's ad status probe that ads "loaded".
   try { window.google_ad_status = 1; } catch (_) {}
+
+  // 7. Lighter page: override a few client experiment flags. The app looks
+  //    them up in ytcfg's EXPERIMENT_FLAGS on every check, and the player reads
+  //    its own copy from WEB_PLAYER_CONTEXT_CONFIGS.*.serializedExperimentFlags
+  //    when it's created, so both are patched as soon as the inline bootstrap
+  //    hands them to ytcfg.set. Not tied to the popup switches: none of this
+  //    changes what you see, only what the page does in the background.
+  const FLAGS = {
+    kevlar_watch_cinematics: false,           // ambient mode: no blurred canvas behind the player
+    block_all_player_prefetch_requests: true, // don't fetch the next video's /player in advance…
+    web_prefetch_preload_video: false,        // …nor pre-buffer its media
+    web_tracing_session_replay: 0,            // session replay: record no DOM/mouse events
+    web_session_replay_sample_rate: 0,
+  };
+  const patchSerialized = (s) => {
+    for (const [key, value] of Object.entries(FLAGS)) {
+      s = s.replace(new RegExp(`(^|&)${key}=[^&]*`), `$1${key}=${value}`);
+    }
+    return s;
+  };
+  const patchFlags = (flags) => {
+    if (flags && typeof flags === "object") Object.assign(flags, FLAGS);
+    return flags;
+  };
+  const patchPlayerConfigs = (configs) => {
+    if (configs && typeof configs === "object") {
+      for (const c of Object.values(configs)) {
+        if (c && typeof c.serializedExperimentFlags === "string") c.serializedExperimentFlags = patchSerialized(c.serializedExperimentFlags);
+      }
+    }
+    return configs;
+  };
+  // Once a key shows up, turn it into an accessor so the overrides survive
+  // YouTube swapping the object out for a new one.
+  const sticky = (data, key, patch) => {
+    const desc = Object.getOwnPropertyDescriptor(data, key);
+    if (!desc || !("value" in desc) || !desc.configurable) return;
+    let value = patch(desc.value);
+    Object.defineProperty(data, key, {
+      configurable: true,
+      enumerable: desc.enumerable,
+      get: () => value,
+      set: (v) => { value = patch(v); },
+    });
+  };
+  const patchConfig = (data) => {
+    if (!data || typeof data !== "object") return;
+    sticky(data, "EXPERIMENT_FLAGS", patchFlags);
+    sticky(data, "WEB_PLAYER_CONTEXT_CONFIGS", patchPlayerConfigs);
+  };
+  let ytcfg;
+  try {
+    Object.defineProperty(window, "ytcfg", {
+      configurable: true,
+      get: () => ytcfg,
+      set: (v) => {
+        ytcfg = v;
+        if (!v || typeof v.set !== "function" || v.set.__ytDebloat) return;
+        const origSet = v.set;
+        v.set = function () {
+          const result = origSet.apply(this, arguments);
+          try { patchConfig(typeof v.d === "function" ? v.d() : v.data_); } catch (_) {}
+          return result;
+        };
+        v.set.__ytDebloat = true;
+      },
+    });
+  } catch (_) { /* already defined non-configurably — page runs with stock flags */ }
 })();

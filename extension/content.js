@@ -118,15 +118,12 @@
     onPlayerClass();
   };
 
-  // Попап анти-адблока скрыт в CSS, но он успевает поставить видео на паузу
+  // Скрытый CSS-ом диалог остаётся открытым: затемняет страницу и блокирует
+  // плеер. Закрываем через Polymer API в MAIN world, а не удаляем backdrop.
   const dismissEnforcement = () => {
     if (!settings.ads) return;
-    const popup = document.querySelector("ytd-enforcement-message-view-model");
-    if (!popup || popup.dataset.ytDebloat) return;
-    popup.dataset.ytDebloat = "1";
-    document.querySelector("tp-yt-iron-overlay-backdrop")?.remove();
-    const video = player && player.querySelector("video");
-    if (video && video.paused) video.play().catch(() => {});
+    if (!document.querySelector("tp-yt-paper-dialog[opened] ytd-enforcement-message-view-model")) return;
+    document.dispatchEvent(new Event("yt-debloat-dismiss-enforcement"));
   };
 
   // ───────── Один дешёвый проход на структурные изменения DOM ─────────
@@ -138,13 +135,15 @@
       scheduled = false;
       if (!player || !player.isConnected) watchPlayer();
       dismissEnforcement();
+      if (settings.ads) document.dispatchEvent(new Event("yt-debloat-recover-player"));
       hideShortsByText();
     });
   };
 
   const domObserver = new MutationObserver(schedule);
   const start = () => {
-    domObserver.observe(root, { childList: true, subtree: true });
+    // Polymer can reopen an existing dialog without inserting any new nodes.
+    domObserver.observe(root, { childList: true, subtree: true, attributes: true, attributeFilter: ["opened"] });
     watchPlayer();
     schedule();
   };
