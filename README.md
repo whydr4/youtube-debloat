@@ -116,7 +116,7 @@ No resident process, no menu-bar icon, nothing running between checks.
 
 - Only **releases** ship (`vX.Y.Z` tags). Random commits on `main` and pre-releases like `v2.0.0-beta` never reach you.
 - Safari picks up the new build **on its next launch**. The toolbar popup then tells you once:
-  *"Updated to v1.2.1 — what's new →"*.
+  *"Updated to v1.2.2 — what's new →"*.
 - Log of every check: `~/Library/Logs/YouTube Debloat.log`.
 
 Can't wait for tomorrow?
@@ -155,7 +155,7 @@ The very first video of a fresh page load is the stubborn one: it arrives baked 
 planned, so Debloat quietly reloads it once, the right way, and it starts clean. Live streams and playlists
 skip that reload (it would lose your place in the playlist), so those can still make you wait the old way.
 
-YouTube can also reject the initial player response after the page has loaded. Since 1.2.1, Debloat tries one
+YouTube can also reject the initial player response after the page has loaded. Since 1.2.2, Debloat tries one
 normal player request when that happens, keeping the same idle setting. No alternate player params or client
 spoofing. A loaded preview of the same video can be reused too. The picture is shown only after frames arrive;
 if recovery fails, the error stays visible. That retry still takes network time, and live streams and playlists
@@ -228,7 +228,7 @@ Hacking for a while? Turn auto-update off (see above).
 ### Cutting a release
 
 1. Bump `version` in `extension/manifest.json` (that's what the "Updated to …" note shows).
-2. Commit, tag, push: `git tag v1.2.1 && git push origin main v1.2.1`.
+2. Commit, tag, push: `git tag v1.2.2 && git push origin main v1.2.2`.
 3. GitHub Actions builds the app and attaches `YouTube-Debloat.zip` to the release (it fails if the tag and
    `manifest.json` disagree). A rebuild of an existing tag: *Actions → Release build → Run workflow*.
 4. Write the notes on GitHub → *Releases* — that's where "what's new" links to.
